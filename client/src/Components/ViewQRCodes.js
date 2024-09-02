@@ -4,17 +4,28 @@ import QRCodeCard from './QRCodeCard';
 
 function ViewQRCodes() {
     const [qrCodes, setQrCodes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get('http://localhost:5001/api/qrcodes')
-            .then((response) => setQrCodes(response.data))
-            .catch((error) => console.error(error));
+            .then((response) => {
+                setQrCodes(response.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                setLoading(false);
+            });
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
             <h2>All QR Codes</h2>
-            <div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
                 {qrCodes.map((qrCode) => (
                     <QRCodeCard key={qrCode.QRId} qrCode={qrCode} />
                 ))}

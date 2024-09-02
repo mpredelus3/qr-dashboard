@@ -19,7 +19,8 @@ function CreateQRCode() {
             });
             setQrCode(response.data.qrDataURL);
         } catch (error) {
-            console.error(error);
+            console.error("Error generating QR Code:", error);
+            alert("Failed to generate QR Code. Please check the server and try again.");
         }
     };
 
@@ -27,14 +28,36 @@ function CreateQRCode() {
         <div>
             <h2>Create QR Code</h2>
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="QR ID" value={qrId} onChange={(e) => setQrId(e.target.value)} required />
-                <input type="url" placeholder="Redirect URL" value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} required />
-                <input type="color" value={squareColor} onChange={(e) => setSquareColor(e.target.value)} required />
-                <input type="color" value={eyeColor} onChange={(e) => setEyeColor(e.target.value)} required />
+                <input
+                    type="text"
+                    placeholder="QR ID"
+                    value={qrId}
+                    onChange={(e) => setQrId(e.target.value)}
+                    required
+                />
+                <input
+                    type="url"
+                    placeholder="Redirect URL"
+                    value={redirectURL}
+                    onChange={(e) => setRedirectURL(e.target.value)}
+                    required
+                />
+                <input
+                    type="color"
+                    value={squareColor}
+                    onChange={(e) => setSquareColor(e.target.value)}
+                    required
+                />
+                <input
+                    type="color"
+                    value={eyeColor}
+                    onChange={(e) => setEyeColor(e.target.value)}
+                    required
+                />
                 <button type="submit">Generate QR Code</button>
             </form>
             {qrCode && (
-                <div>
+                <div className="qr-code-container">
                     <h3>QR Code:</h3>
                     <img src={qrCode} alt="QR Code" />
                 </div>

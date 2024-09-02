@@ -2,12 +2,13 @@ import React from 'react';
 
 function QRCodeCard({ qrCode }) {
     return (
-        <div>
+        <div style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '5px', width: '200px' }}>
             <h3>{qrCode.QRId}</h3>
-            <p>Redirect URL: {qrCode.RedirectURL}</p>
-            <p>Square Color: {qrCode.SquareColor}</p>
-            <p>Eye Color: {qrCode.EyeColor}</p>
-            <p>Created At: {qrCode.CreatedAt}</p>
+            <p><strong>URL:</strong> {qrCode.RedirectURL}</p>
+            <p><strong>Square Color:</strong> {qrCode.SquareColor}</p>
+            <p><strong>Eye Color:</strong> {qrCode.EyeColor}</p>
+            <p><strong>Created At:</strong> {qrCode.CreatedAt}</p>
+            <img src={`http://localhost:5001/qr/${qrCode.QRId}`} alt="QR Code" />
         </div>
     );
 }
