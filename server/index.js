@@ -7,7 +7,7 @@ const mssql = require('mssql');
 const axios = require('axios');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -17,6 +17,7 @@ const dbConfig = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     server: process.env.DB_SERVER,
+    port: parseInt(process.env.DB_PORT, 10),
     database: process.env.DB_DATABASE,
     options: {
         encrypt: true,
@@ -58,7 +59,7 @@ app.post('/api/create-qr', async (req, res) => {
             .input('RedirectURL', mssql.NVarChar(2048), redirectURL)
             .input('SquareColor', mssql.NVarChar(7), squareColor)
             .input('EyeColor', mssql.NVarChar(7), eyeColor)
-            .query(`INSERT INTO QRCodes (QRId, RedirectURL, SquareColor, EyeColor)
+            .query(`INSERT INTO dbo.QRCodes (QRId, RedirectURL, SquareColor, EyeColor)
                     VALUES (@QRId, @RedirectURL, @SquareColor, @EyeColor)`);
 
         res.json({ qrDataURL });
@@ -73,7 +74,7 @@ app.get('/api/qrcodes', async (req, res) => {
     try {
         const pool = await mssql.connect(dbConfig);
         const result = await pool.request()
-            .query(`SELECT QRId, RedirectURL, SquareColor, EyeColor, CreatedAt FROM QRCodes ORDER BY CreatedAt DESC`);
+            .query(`SELECT QRId, RedirectURL, SquareColor, EyeColor, CreatedAt FROM dbo.QRCodes ORDER BY CreatedAt DESC`);
         res.json(result.recordset);
     } catch (error) {
         console.error(error);
@@ -93,7 +94,7 @@ app.get('/scan/:qrId', async (req, res) => {
         const pool = await mssql.connect(dbConfig);
         const qrResult = await pool.request()
             .input('QRId', mssql.NVarChar(100), qrId)
-            .query(`SELECT RedirectURL FROM QRCodes WHERE QRId = @QRId`);
+            .query(`SELECT RedirectURL FROM dbo.QRCodes WHERE QRId = @QRId`);
 
         if (qrResult.recordset.length === 0) {
             return res.status(404).send('QR Code not found.');
@@ -126,7 +127,7 @@ app.get('/scan/:qrId', async (req, res) => {
             .input('Country', mssql.NVarChar(100), country)
             .input('City', mssql.NVarChar(100), city)
             .input('ScannerIdentifier', mssql.NVarChar(100), scannerIdentifier)
-            .query(`INSERT INTO QRScanLogs (QRId, DeviceInfo, Country, City, ScannerIdentifier)
+            .query(`INSERT INTO dbo.QRScans (QRId, DeviceInfo, Country, City, ScannerIdentifier)
                     VALUES (@QRId, @DeviceInfo, @Country, @City, @ScannerIdentifier)`);
 
         res.redirect(redirectURL);
